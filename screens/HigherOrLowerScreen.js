@@ -28,6 +28,10 @@ export default function HigherOrLowerScreen({ navigation }) {
   const [nextCard, setNextCard] = useState(null);
   const [result, setResult] = useState("");
 
+  // set score and best score
+  const [score, setScore] = useState(0);
+  const [bestScore, setBestScore] = useState(0);
+
   useEffect(() => {
     const newDeck = createDeck();
     setDeck(newDeck);
@@ -40,14 +44,32 @@ export default function HigherOrLowerScreen({ navigation }) {
     const next = deck[1];
     setNextCard(next);
 
-    if (guess === "higher" && next > currentCard) {
-      setResult("Correct!");
-    } else if (guess === "lower" && next < currentCard) {
-      setResult("Correct!");
-    } else if (next === currentCard) {
+    let isCorrect = false;
+
+    if (guess === "higher" && next > currentCard) isCorrect = true;
+    if (guess === "lower" && next < currentCard) isCorrect = true;
+    if (next === currentCard) {
       setResult("Same Value!");
+      isCorrect = false;
+    }
+
+    if (isCorrect) {
+      setResult("Correct!");
+
+      // Increase score with each correct guess
+      const newScore = score + 1;
+      setScore(newScore);
+
+      // Update best score
+      if (newScore > bestScore) {
+        setBestScore(newScore);
+      }
+
     } else {
       setResult("Wrong!");
+
+      // Resets currentscore on wrong guess
+      setScore(0);
     }
 
     const updated = deck.slice(1);
@@ -65,6 +87,7 @@ export default function HigherOrLowerScreen({ navigation }) {
     setCurrentCard(fresh[0]);
     setNextCard(null);
     setResult("");
+    setScore(0); // Resets high score
   };
 
   const cardLabel = (val) => {
@@ -78,6 +101,10 @@ export default function HigherOrLowerScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Higher or Lower</Text>
+
+      {/*  Score UI  */}
+      <Text style={styles.scoreText}>Score: {score}</Text>
+      <Text style={styles.scoreText}>Best Score: {bestScore}</Text>
 
       <Text style={styles.label}>Current Card:</Text>
       <Text style={styles.card}>
@@ -123,6 +150,13 @@ const styles = StyleSheet.create({
     color: "white",
     marginBottom: 20,
   },
+
+  scoreText: {
+    color: "white",
+    fontSize: 18,
+    marginBottom: 4,
+  },
+
   label: {
     color: "#aaa",
     fontSize: 16,
