@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const STORAGE_KEY = '@woahgames/hol_stats';
 
 export default function HigherOrLowerScreen({ navigation }) {
 
@@ -33,10 +36,30 @@ export default function HigherOrLowerScreen({ navigation }) {
   const [bestScore, setBestScore] = useState(0);
 
   useEffect(() => {
-    const newDeck = createDeck();
-    setDeck(newDeck);
-    setCurrentCard(newDeck[0]);
+    const init = async () => {
+      try {
+        const saved = await AsyncStorage.getItem(STORAGE_KEY);
+        if (saved !== null) {
+          const parsed = JSON.parse(saved);
+          setBestScore(parsed.bestScore || 0);
+        }
+      } catch (e) {
+        console.error('Failed to load H.O.L stats:', e);
+      }
+      const newDeck = createDeck();
+      setDeck(newDeck);
+      setCurrentCard(newDeck[0]);
+    };
+    init();
   }, []);
+
+  const saveBestScore = async (newBest) => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ bestScore: newBest }));
+    } catch (e) {
+      console.error('Failed to save H.O.L stats:', e);
+    }
+  };
 
   const handleGuess = (guess) => {
     if (deck.length < 2) return;
@@ -56,19 +79,20 @@ export default function HigherOrLowerScreen({ navigation }) {
     if (isCorrect) {
       setResult("Correct!");
 
-      // Increase score with each correct guess
+      // Increase score on correct guess
       const newScore = score + 1;
       setScore(newScore);
 
-      // Update best score
+      // Update best score if current score exceeds it
       if (newScore > bestScore) {
         setBestScore(newScore);
+        saveBestScore(newScore);
       }
 
     } else {
       setResult("Wrong!");
 
-      // Resets currentscore on wrong guess
+      // Resets current score on wrong guess
       setScore(0);
     }
 
@@ -87,7 +111,7 @@ export default function HigherOrLowerScreen({ navigation }) {
     setCurrentCard(fresh[0]);
     setNextCard(null);
     setResult("");
-    setScore(0); // Resets high score
+    setScore(0);
   };
 
   const cardLabel = (val) => {
@@ -146,7 +170,7 @@ export default function HigherOrLowerScreen({ navigation }) {
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
