@@ -98,111 +98,144 @@ export default function HigherOrLowerScreen({ navigation }) {
     return val;
   };
 
-  return (
+ return (
     <View style={styles.container}>
       <Text style={styles.header}>Higher or Lower</Text>
 
-      {/*  Score UI  */}
-      <Text style={styles.scoreText}>Score: {score}</Text>
-      <Text style={styles.scoreText}>Best Score: {bestScore}</Text>
+      {/* Score display */}
+      <View style={styles.scoreBox}>
+        <Text style={styles.scoreText}>Score: {score}</Text>
+        <Text style={styles.scoreText}>Best: {bestScore}</Text>
+      </View>
 
-      <Text style={styles.label}>Current Card:</Text>
-      <Text style={styles.card}>
-        {currentCard !== null ? cardLabel(currentCard) : "-"}
-      </Text>
+      {/* Card display */}
+      <View style={styles.cardBox}>
+        <Text style={styles.cardValue}>
+          {currentCard !== null ? cardLabel(currentCard) : "-"}
+        </Text>
 
-      {result !== "" && <Text style={styles.result}>{result}</Text>}
+        {/* Suit cycle */}
+        <Text style={styles.suitText}>
+          {["♠️", "♥️", "♦️", "♣️"][currentCard % 4]}
+        </Text>
+      </View>
 
-      <View style={styles.row}>
-        <TouchableOpacity style={styles.btn} onPress={() => handleGuess("higher")}>
-          <Text style={styles.btnText}>Higher</Text>
+      {/* Result text */}
+      {result !== "" && (
+        <Text style={styles.result}>{result}</Text>
+      )}
+
+      {/* Buttons */}
+      <View style={styles.btnRow}>
+        <TouchableOpacity style={styles.actionBtn} onPress={() => handleGuess("higher")}>
+          <Text style={styles.actionText}>Higher ↑</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btn} onPress={() => handleGuess("lower")}>
-          <Text style={styles.btnText}>Lower</Text>
+        <TouchableOpacity style={styles.actionBtn} onPress={() => handleGuess("lower")}>
+          <Text style={styles.actionText}>Lower ↓</Text>
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.reset} onPress={resetGame}>
+      {/* Reset and back */}
+      <TouchableOpacity style={styles.resetBtn} onPress={resetGame}>
         <Text style={styles.resetText}>Reset</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.back} onPress={() => navigation.goBack()}>
+      <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
         <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>
     </View>
   );
-}
-
-
-// Temporary Styles for the Higher or Lower screen will be adjusted later to match our UI mockups !!
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#141414",
+    backgroundColor: "#111",
     alignItems: "center",
-    paddingTop: 60,
+    paddingTop: 55,
   },
+
   header: {
     fontSize: 32,
     fontWeight: "bold",
     color: "white",
-    marginBottom: 20,
+    marginBottom: 25,
+  },
+
+  scoreBox: {
+    marginBottom: 15,
+    alignItems: "center",
   },
 
   scoreText: {
     color: "white",
     fontSize: 18,
-    marginBottom: 4,
   },
 
-  label: {
-    color: "#aaa",
-    fontSize: 16,
-    marginBottom: 6,
+  cardBox: {
+    width: 120,
+    height: 160,
+    borderWidth: 2,
+    borderColor: "white",
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 18,
+    backgroundColor: "#1A1A1A",
   },
-  card: {
-    fontSize: 48,
+
+  cardValue: {
+    fontSize: 40,
     color: "white",
-    marginBottom: 20,
   },
+
+  suitText: {
+    fontSize: 26,
+    marginTop: 4,
+  },
+
   result: {
     fontSize: 22,
     color: "#FFD700",
     marginBottom: 20,
   },
-  row: {
+
+  btnRow: {
     flexDirection: "row",
     gap: 20,
-    marginVertical: 20,
+    marginBottom: 20,
   },
-  btn: {
+
+  actionBtn: {
     backgroundColor: "#333",
-    paddingHorizontal: 30,
     paddingVertical: 12,
-    borderRadius: 8,
-  },
-  btnText: {
-    color: "white",
-    fontSize: 18,
-  },
-  reset: {
-    marginTop: 10,
-    backgroundColor: "#444",
-    paddingVertical: 10,
     paddingHorizontal: 25,
     borderRadius: 8,
   },
+
+  actionText: {
+    color: "white",
+    fontSize: 18,
+  },
+
+  resetBtn: {
+    backgroundColor: "#444",
+    paddingHorizontal: 25,
+    paddingVertical: 10,
+    borderRadius: 8,
+    marginBottom: 15,
+  },
+
   resetText: {
     color: "white",
     fontSize: 16,
   },
-  back: {
-    marginTop: 20,
-  },
+
+  backBtn: {},
+
   backText: {
-    fontSize: 16,
     color: "#888",
+    fontSize: 16,
   },
 });
