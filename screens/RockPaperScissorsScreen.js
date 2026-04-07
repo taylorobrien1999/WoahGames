@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const choices = ["Rock", "Paper", "Scissors"];
+const choices = [
+  { name: "Rock", icon: "🪨" },
+  { name: "Paper", icon: "📄" },
+  { name: "Scissors", icon: "✂️" }
+];
 
 export default function RockPaperScissorsScreen({ navigation }) {
   const [result, setResult] = useState("");
-  const [playerChoice, setPlayerChoice] = useState("");
-  const [computerChoice, setComputerChoice] = useState("");
+  const [playerChoice, setPlayerChoice] = useState(null);
+  const [cpuChoice, setCpuChoice] = useState(null);
 
-  const getResult = (player, computer) => {
-    if (player === computer) return "Draw";
+  const getResult = (player, cpu) => {
+    if (player === cpu) return "Draw";
 
     if (
-      (player === "Rock" && computer === "Scissors") ||
-      (player === "Paper" && computer === "Rock") ||
-      (player === "Scissors" && computer === "Paper")
+      (player === "Rock" && cpu === "Scissors") ||
+      (player === "Paper" && cpu === "Rock") ||
+      (player === "Scissors" && cpu === "Paper")
     ) {
       return "You Win!";
     }
@@ -22,20 +26,20 @@ export default function RockPaperScissorsScreen({ navigation }) {
     return "You Lose!";
   };
 
-  const handleChoice = (choice) => {
-    const randomChoice = choices[Math.floor(Math.random() * 3)];
+  const handleChoice = (choiceName) => {
+    const randomIndex = Math.floor(Math.random() * choices.length);
+    const cpuSelected = choices[randomIndex].name;
 
-    setPlayerChoice(choice);
-    setComputerChoice(randomChoice);
+    setPlayerChoice(choiceName);
+    setCpuChoice(cpuSelected);
 
-    const gameResult = getResult(choice, randomChoice);
-    setResult(gameResult);
+    setResult(getResult(choiceName, cpuSelected));
   };
 
   const resetGame = () => {
     setResult("");
-    setPlayerChoice("");
-    setComputerChoice("");
+    setPlayerChoice(null);
+    setCpuChoice(null);
   };
 
   return (
@@ -44,21 +48,27 @@ export default function RockPaperScissorsScreen({ navigation }) {
       <Text style={styles.header}>Rock Paper Scissors</Text>
 
       <View style={styles.buttonContainer}>
-        {choices.map((choice) => (
+        {choices.map((item) => (
           <TouchableOpacity
-            key={choice}
+            key={item.name}
             style={styles.choiceBtn}
-            onPress={() => handleChoice(choice)}
+            onPress={() => handleChoice(item.name)}
           >
-            <Text style={styles.choiceText}>{choice}</Text>
+            <Text style={styles.choiceIcon}>{item.icon}</Text>
+            <Text style={styles.choiceText}>{item.name}</Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      {playerChoice !== "" && (
+      {playerChoice && (
         <View style={styles.resultContainer}>
-          <Text style={styles.resultText}>You: {playerChoice}</Text>
-          <Text style={styles.resultText}>CPU: {computerChoice}</Text>
+          <Text style={styles.resultText}>
+            You: {playerChoice}
+          </Text>
+          <Text style={styles.resultText}>
+            CPU: {cpuChoice}
+          </Text>
+
           <Text style={styles.finalResult}>{result}</Text>
         </View>
       )}
@@ -75,8 +85,6 @@ export default function RockPaperScissorsScreen({ navigation }) {
   );
 }
 
-// Temporary Styles for the RPS screen will be adjusted later to match our UI mockups !!
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -88,28 +96,35 @@ const styles = StyleSheet.create({
     fontSize: 28,
     color: "white",
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 25,
   },
   buttonContainer: {
     flexDirection: "row",
-    gap: 10,
+    gap: 12,
   },
   choiceBtn: {
-    backgroundColor: "#333",
-    padding: 15,
-    borderRadius: 8,
+    backgroundColor: "#2e2e2e",
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  choiceIcon: {
+    fontSize: 26,
+    marginBottom: 4,
   },
   choiceText: {
     color: "white",
-    fontSize: 16,
+    fontSize: 15,
   },
   resultContainer: {
-    marginTop: 30,
+    marginTop: 35,
     alignItems: "center",
   },
   resultText: {
     color: "white",
     fontSize: 18,
+    marginBottom: 4,
   },
   finalResult: {
     marginTop: 10,
@@ -120,7 +135,7 @@ const styles = StyleSheet.create({
   resetBtn: {
     marginTop: 30,
     backgroundColor: "#333",
-    paddingHorizontal: 30,
+    paddingHorizontal: 35,
     paddingVertical: 10,
     borderRadius: 8,
   },
@@ -129,9 +144,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   backBtn: {
-    marginTop: 15,
+    marginTop: 18,
   },
   backText: {
-    color: "#888",
+    color: "#999",
   },
 });
