@@ -80,8 +80,6 @@ export default function TicTacToeScreen({ navigation }) {
   );
 }
 
-// Temporary Styles for the Tic Tac Toe screen will be adjusted later to match our UI mockups !!
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
